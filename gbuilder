@@ -2,7 +2,7 @@
 set -euo pipefail
 _output() {
   echo ""
-  echo "🛠  $@"
+  echo "🛠  $@  (${SECONDS}s)"
 }
 
 _output "START"
@@ -25,6 +25,12 @@ echo ""
 
 _output "export:"
 export
+
+if gcloud container images describe "$REGISTRY/$IMAGE:$TAG"; then
+  _output "EXISTS $REGISTRY/$IMAGE:$TAG"
+  _output "OK -- NOP"
+  exit 0
+fi
 
 _output "PULL images"
 
@@ -75,4 +81,4 @@ if [ "$CACHE_TAG" != "$TAG" ]; then
   ) 2>&1 | sed -le "s#^#🛠  push cache :$CACHE_TAG -- #;"
 fi
 
-_output "OK"
+_output "OK -- all"
