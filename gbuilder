@@ -27,10 +27,13 @@ _output "export:"
 export
 
 if gcloud container images describe "$REGISTRY/$IMAGE:$TAG"; then
-  _output "EXISTS $REGISTRY/$IMAGE:$TAG"
+  _output "Image $REGISTRY/$IMAGE:$TAG already exists, stopping here."
   _output "OK -- NOP"
   exit 0
 fi
+
+_output "Dockerfile"
+cat Dockerfile
 
 _output "PULL images"
 
