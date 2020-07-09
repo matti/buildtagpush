@@ -1,10 +1,9 @@
-# FROM gcr.io/cloud-builders/docker:19.03.8
-FROM google/cloud-sdk:alpine
+FROM alpine:3.12.0
 
 RUN apk add --no-cache \
   bash sed \
-  docker
+  docker-cli
 
-COPY gbuilder /usr/bin
+COPY buildbuild /usr/bin
 WORKDIR /workspace
-ENTRYPOINT [ "/usr/bin/gbuilder" ]
+ENTRYPOINT [ "/usr/bin/buildbuild" ]

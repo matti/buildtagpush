@@ -12,9 +12,9 @@ jobs:
         with:
           username: mattipaksula
           password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: mattipaksula/gbuilder
+          repository: mattipaksula/buildtagpush
           tag_with_ref: true
           tag_with_sha: true
-          cache_froms: mattipaksula/gbuilder:latest
+          cache_froms: mattipaksula/buildtagpush:latest
         env:
           DOCKER_BUILDKIT: 1
