@@ -10,3 +10,11 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./:/workspace
+  trypull:
+    build: .
+    image: mattipaksula/buildtagpush:latest
+    command:
+      - trypull
+      - notexist:notlatest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

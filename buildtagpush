@@ -7,6 +7,15 @@ _output() {
 
 _output "START"
 
+case "${1:-}" in
+  trypull)
+    _output "try pull $2"
+    docker pull "$2" || true
+    _output "OK -- trypull"
+    exit 0
+  ;;
+esac
+
 export BUILDKIT_PROGRESS=plain
 export DOCKER_BUILDKIT=1
 
