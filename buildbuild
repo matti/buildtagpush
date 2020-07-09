@@ -49,17 +49,13 @@ for image in $from_images $copy_froms; do
   [ "$image" = "scratch" ] && continue
   (
     docker pull "$image" || true
-  ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) pull $image -- #;" &
+  ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) pull dep $image -- #;" &
 done
-
-(
-  docker pull "$REGISTRY/$IMAGE:$TAG" || true
-) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) pull :$TAG -- #;"
 
 if [ "$CACHE_TAG" != "$TAG" ]; then
   (
     docker pull "$REGISTRY/$IMAGE:$CACHE_TAG" || true
-  ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) pull :$CACHE_TAG -- #;"
+  ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) pull cache :$CACHE_TAG -- #;" &
 fi
 
 wait $(jobs -p)
