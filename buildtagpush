@@ -37,21 +37,6 @@ cat Dockerfile
 
 _output "PULL images"
 
-# https://github.com/moby/moby/issues/40262#issuecomment-656036657)
-from_images=""
-copy_froms=""
-set +e
-  from_images=$(cat Dockerfile | grep FROM | cut -d' ' -f2)
-  copy_froms=$(cat Dockerfile | grep "COPY --from=" | cut -d'=' -f2 | cut -d' ' -f1)
-set -e
-
-for image in $from_images $copy_froms; do
-  [ "$image" = "scratch" ] && continue
-  (
-    docker pull "$image" || true
-  ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) pull dep $image -- #;" &
-done
-
 if [ "$CACHE_TAG" != "$TAG" ]; then
   (
     docker pull "$REGISTRY/$IMAGE:$CACHE_TAG" || true
@@ -63,7 +48,36 @@ wait $(jobs -p)
 _output "BUILD $REGISTRY/$IMAGE:$TAG with cache from $REGISTRY/$IMAGE:$CACHE_TAG"
 
 (
-  docker build --cache-from="$REGISTRY/$IMAGE:$CACHE_TAG" --build-arg BUILDKIT_INLINE_CACHE=1 -t "$REGISTRY/$IMAGE:$TAG" .
+  for try in {1..2}; do
+    if docker build --cache-from="$REGISTRY/$IMAGE:$CACHE_TAG" --build-arg BUILDKIT_INLINE_CACHE=1 -t "$REGISTRY/$IMAGE:$TAG" .; then
+      break
+    else
+      if [ "$try" != "1" ]; then
+        echo "second attempt failed, exit 1"
+        exit 1
+      fi
+
+      echo "first attempt failed, trying to pull deps"
+      # https://github.com/moby/moby/issues/40262#issuecomment-656036657)
+      from_images=""
+      copy_froms=""
+      set +e
+        from_images=$(cat Dockerfile | grep FROM | cut -d' ' -f2)
+        copy_froms=$(cat Dockerfile | grep "COPY --from=" | cut -d'=' -f2 | cut -d' ' -f1)
+      set -e
+
+      for image in $from_images $copy_froms; do
+        [ "$image" = "scratch" ] && continue
+        (
+          docker pull "$image" || true
+        ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) pull dep $image -- #;" &
+      done
+
+      wait $(jobs -p)
+
+      echo "deps pulled, trying one more time"
+    fi
+  done
 ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) build -- #;"
 
 (

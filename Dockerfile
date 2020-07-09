@@ -6,4 +6,4 @@ RUN apk add --no-cache \
 
 COPY buildtagpush /usr/bin
 WORKDIR /workspace
-ENTRYPOINT [ "/usr/bin/builtagpush" ]
+ENTRYPOINT [ "/usr/bin/buildtagpush" ]
