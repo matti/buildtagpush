@@ -16,5 +16,6 @@ services:
     command:
       - trypull
       - notexist:notlatest
+      - alpine:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

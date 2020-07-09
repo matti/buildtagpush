@@ -9,8 +9,17 @@ _output "START: $(date)"
 
 case "${1:-}" in
   trypull)
-    _output "try pull $2"
-    docker pull "$2" || true
+    images="${@:2}"
+    _output "try pull"
+
+    for image in $images; do
+      (
+        docker pull "$image" || true
+      ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) trypull $image -- #;" &
+    done
+
+    wait $(jobs -p)
+
     _output "OK -- trypull"
     exit 0
   ;;
@@ -26,6 +35,7 @@ export WORKDIR=${WORKDIR:-/workspace}
 cd "$WORKDIR"
 
 _output "pwd: $(pwd)"
+_output "nproc: $(nproc)"
 _output "docker version:"
 
 
