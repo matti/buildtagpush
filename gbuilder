@@ -2,7 +2,7 @@
 set -euo pipefail
 _output() {
   echo ""
-  echo "🛠  $@  (${SECONDS}s)"
+  echo "🛠 (${SECONDS}s) $@"
 }
 
 _output "START"
@@ -49,39 +49,39 @@ for image in $from_images $copy_froms; do
   [ "$image" = "scratch" ] && continue
   (
     docker pull "$image" || true
-  ) 2>&1 | sed -le "s#^#🛠  pull $image -- #;" &
+  ) 2>&1 | sed -le "s#^#🛠 pull $image -- #;" &
 done
 
 (
   docker pull "$REGISTRY/$IMAGE:$TAG" || true
-) 2>&1 | sed -le "s#^#🛠  pull :$TAG -- #;"
+) 2>&1 | sed -le "s#^#🛠 pull :$TAG -- #;"
 
 if [ "$CACHE_TAG" != "$TAG" ]; then
   (
     docker pull "$REGISTRY/$IMAGE:$CACHE_TAG" || true
-  ) 2>&1 | sed -le "s#^#🛠  pull :$CACHE_TAG -- #;"
+  ) 2>&1 | sed -le "s#^#🛠 pull :$CACHE_TAG -- #;"
 fi
 
 wait $(jobs -p)
 
-_output "BUILD $REGISTRY/$IMAGE:$TAG with cache from tag :$CACHE_TAG"
+_output "BUILD $REGISTRY/$IMAGE:$TAG with cache from $REGISTRY/$IMAGE:$CACHE_TAG"
 
 (
   docker build --cache-from="$REGISTRY/$IMAGE:$CACHE_TAG" --build-arg BUILDKIT_INLINE_CACHE=1 -t "$REGISTRY/$IMAGE:$TAG" .
-) 2>&1 | sed -le "s#^#🛠  build -- #;"
+) 2>&1 | sed -le "s#^#🛠 build -- #;"
 
 (
   docker tag "$REGISTRY/$IMAGE:$TAG" "$REGISTRY/$IMAGE:$CACHE_TAG"
-) 2>&1 | sed -le "s#^#🛠  tag -- #;"
+) 2>&1 | sed -le "s#^#🛠 tag -- #;"
 
 (
   docker push "$REGISTRY/$IMAGE:$TAG"
-) 2>&1 | sed -le "s#^#🛠  push tag :$TAG -- #;"
+) 2>&1 | sed -le "s#^#🛠 push tag :$TAG -- #;"
 
 if [ "$CACHE_TAG" != "$TAG" ]; then
   (
     docker push "$REGISTRY/$IMAGE:$CACHE_TAG"
-  ) 2>&1 | sed -le "s#^#🛠  push cache :$CACHE_TAG -- #;"
+  ) 2>&1 | sed -le "s#^#🛠 push cache :$CACHE_TAG -- #;"
 fi
 
 _output "OK -- all"
