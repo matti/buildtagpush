@@ -5,7 +5,7 @@ _output() {
   echo "🛠 (${SECONDS}s) $@"
 }
 
-_output "START"
+_output "START: $(date)"
 
 case "${1:-}" in
   trypull)
