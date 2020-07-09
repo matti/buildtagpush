@@ -4,6 +4,6 @@ RUN apk add --no-cache \
   bash sed \
   docker-cli
 
-COPY buildbuild /usr/bin
+COPY buildtagpush /usr/bin
 WORKDIR /workspace
-ENTRYPOINT [ "/usr/bin/buildbuild" ]
+ENTRYPOINT [ "/usr/bin/builtagpush" ]
