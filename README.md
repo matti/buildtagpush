@@ -17,4 +17,5 @@ steps:
       - "TAG=[latest]"
       - "CACHE_TAG=[$TAG]"
       - "WORKDIR=[/workspace]"
+      - "DOCKERFILE=[Dockerfile]"
 ```
