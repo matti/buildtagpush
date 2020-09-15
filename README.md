@@ -18,4 +18,5 @@ steps:
       - "CACHE_TAG=[$TAG]"
       - "WORKDIR=[/workspace]"
       - "DOCKERFILE=[Dockerfile]"
+      - "BUILD_OPTS=['']"
 ```

@@ -32,6 +32,7 @@ export TAG=${TAG:-latest}
 export CACHE_TAG=${CACHE_TAG:-$TAG}
 export WORKDIR=${WORKDIR:-/workspace}
 export DOCKERFILE=${DOCKERFILE:-Dockerfile}
+export BUILD_OPTS=${BUILD_OPTS:-}
 
 cd "$WORKDIR"
 
@@ -69,7 +70,7 @@ _output "BUILD $REGISTRY/$IMAGE:$TAG with cache from $REGISTRY/$IMAGE:$CACHE_TAG
 
 (
   for try in {1..2}; do
-    if docker build -f "$DOCKERFILE" --cache-from="$REGISTRY/$IMAGE:$CACHE_TAG" --build-arg BUILDKIT_INLINE_CACHE=1 -t "$REGISTRY/$IMAGE:$TAG" .; then
+    if docker build -f "$DOCKERFILE" --cache-from="$REGISTRY/$IMAGE:$CACHE_TAG" --build-arg BUILDKIT_INLINE_CACHE=1 -t "$REGISTRY/$IMAGE:$TAG" "$BUILD_OPTS" .; then
       break
     else
       if [ "$try" != "1" ]; then
