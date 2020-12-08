@@ -70,7 +70,7 @@ wait $(jobs -p)
 _output "BUILD $REGISTRY/$IMAGE:$TAG with cache from $REGISTRY/$IMAGE:$CACHE_TAG"
 
 (
-  for try in {1..$TRIES}; do
+  for ((try=1; try<=$TRIES; try++)); do
     # NOTE: $BUILD_OPTS needs to be without quotes to expand properly
     if docker build -f "$DOCKERFILE" --cache-from="$REGISTRY/$IMAGE:$CACHE_TAG" --build-arg BUILDKIT_INLINE_CACHE=1 -t "$REGISTRY/$IMAGE:$TAG" $BUILD_OPTS .; then
       break
