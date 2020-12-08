@@ -19,4 +19,5 @@ steps:
       - "WORKDIR=[/workspace]"
       - "DOCKERFILE=[Dockerfile]"
       - "BUILD_OPTS=['']"
+      - "TRIES=[6]"
 ```
