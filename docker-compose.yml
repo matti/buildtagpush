@@ -3,6 +3,7 @@ services:
   buildtagpush:
     build: .
     image: mattipaksula/buildtagpush:latest
+    platform: linux/amd64
     environment:
       - REGISTRY=mattipaksula
       - IMAGE=buildtagpush
