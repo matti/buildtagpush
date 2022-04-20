@@ -90,11 +90,16 @@ _output "BUILD $REGISTRY/$IMAGE:$TAG with cache from $REGISTRY/$IMAGE:$CACHE_TAG
       set +e
         # remofe --platform=... etc
         from_images=$(cat "$DOCKERFILE" | grep FROM | sed 's/\s--.*\s/ /' | cut -d' ' -f2)
-        copy_froms=$(cat "$DOCKERFILE" | sed 's/COPY --from=cache/ /' | grep "COPY --from=" | cut -d'=' -f2 | cut -d' ' -f1)
+        copy_froms=$(cat "$DOCKERFILE" | grep "COPY --from=" | cut -d'=' -f2 | cut -d' ' -f1)
       set -e
 
       for image in $from_images $copy_froms; do
-        [ "$image" = "scratch" ] && continue
+        case $image in
+          scratch|cache)
+            continue
+          ;;
+        esac
+
         (
           docker pull "$image" || true
         ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) pull dep $image -- #;" &
