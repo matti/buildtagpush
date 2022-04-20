@@ -113,19 +113,19 @@ _output "BUILD $REGISTRY/$IMAGE:$TAG with cache from $REGISTRY/$IMAGE:$CACHE_TAG
 ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) build -- #;"
 
 (
-  docker tag "$REGISTRY/$IMAGE:$TAG" "$REGISTRY/$IMAGE:$CACHE_TAG"
+  exec docker tag "$REGISTRY/$IMAGE:$TAG" "$REGISTRY/$IMAGE:$CACHE_TAG"
 ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) tag -- #;"
 
 (
-  docker push "$REGISTRY/$IMAGE:$TAG"
-) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) push tag :$TAG -- #;" &
+  exec docker push "$REGISTRY/$IMAGE:$TAG"
+) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) push tag :$TAG -- #;"
 
 if [ "$CACHE_TAG" != "$TAG" ]; then
   (
-    docker push "$REGISTRY/$IMAGE:$CACHE_TAG"
-  ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) push cache :$CACHE_TAG -- #;" &
+    exec docker push "$REGISTRY/$IMAGE:$CACHE_TAG"
+  ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) push cache :$CACHE_TAG -- #;"
 fi
 
-wait $(jobs -p)
+wait
 
 _output "OK -- all"
