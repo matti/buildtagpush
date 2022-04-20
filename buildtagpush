@@ -88,7 +88,8 @@ _output "BUILD $REGISTRY/$IMAGE:$TAG with cache from $REGISTRY/$IMAGE:$CACHE_TAG
       from_images=""
       copy_froms=""
       set +e
-        from_images=$(cat "$DOCKERFILE" | grep FROM | cut -d' ' -f2)
+        # remofe --platform=... etc
+        from_images=$(cat "$DOCKERFILE" | grep FROM | sed 's/\s--.*\s/ /' | cut -d' ' -f2)
         copy_froms=$(cat "$DOCKERFILE" | grep "COPY --from=" | cut -d'=' -f2 | cut -d' ' -f1)
       set -e
 
