@@ -118,7 +118,7 @@ _output "BUILD $REGISTRY/$IMAGE:$TAG with cache from $REGISTRY/$IMAGE:$CACHE_TAG
 
 (
   exec docker push "$REGISTRY/$IMAGE:$TAG"
-) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) push tag :$TAG -- #;"
+) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) push tag :$TAG -- #;" &
 
 if [ "$CACHE_TAG" != "$TAG" ]; then
   (
