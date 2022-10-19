@@ -61,7 +61,19 @@ _output "PULL images"
 
 if [ "$CACHE_TAG" != "$TAG" ]; then
   (
-    docker pull "$REGISTRY/$IMAGE:$CACHE_TAG" || true
+    pulled=no
+    for ((try=1; try<=$TRIES; try++)); do
+      if docker pull "$REGISTRY/$IMAGE:$CACHE_TAG"; then
+        pulled=yes
+        break
+      fi
+      _output "pull failed, retry"
+      sleep 1
+    done
+
+    if [[ "$pulled" == "no" ]]; then
+      _output "pull failed, this is okay as it is cache"
+    fi
   ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) pull cache :$CACHE_TAG -- #;" &
 fi
 
