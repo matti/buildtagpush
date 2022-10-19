@@ -117,12 +117,38 @@ _output "BUILD $REGISTRY/$IMAGE:$TAG with cache from $REGISTRY/$IMAGE:$CACHE_TAG
 ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) tag -- #;"
 
 (
-  exec docker push "$REGISTRY/$IMAGE:$TAG"
+  pushed=no
+  for ((try=1; try<=$TRIES; try++)); do
+    if docker push "$REGISTRY/$IMAGE:$TAG"; then
+      pushed=yes
+      break
+    fi
+    _output "push failed, retry"
+    sleep 1
+  done
+
+  if [[ "$pushed" == "no" ]]; then
+    _output "push failed."
+    exit 1
+  fi
 ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) push tag :$TAG -- #;" &
 
 if [ "$CACHE_TAG" != "$TAG" ]; then
   (
-    exec docker push "$REGISTRY/$IMAGE:$CACHE_TAG"
+    pushed=no
+    for ((try=1; try<=$TRIES; try++)); do
+      if docker push "$REGISTRY/$IMAGE:$CACHE_TAG"; then
+        pushed=yes
+        break
+      fi
+      _output "push failed, retry"
+      sleep 1
+    done
+
+    if [[ "$pushed" == "no" ]]; then
+      _output "push failed."
+      exit 1
+    fi
   ) 2>&1 | sed -le "s#^#🛠 (${SECONDS}s) push cache :$CACHE_TAG -- #;"
 fi
 
