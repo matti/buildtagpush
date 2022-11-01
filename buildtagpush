@@ -46,7 +46,6 @@ _output "nproc: $(nproc)"
 _output "docker version:"
 
 _output "TAG: ${TAG}"
-_output "DATE_TAG: ${DATE_TAG}"
 _output "CACHE_TAG: ${CACHE_TAG}"
 _output "WORKDIR: ${WORKDIR}"
 _output "DOCKERFILE: ${DOCKERFILE}"
