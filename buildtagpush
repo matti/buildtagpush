@@ -29,6 +29,9 @@ export BUILDKIT_PROGRESS=plain
 export DOCKER_BUILDKIT=1
 
 export TAG=${TAG:-latest}
+commit_timestamp_utc=$(TZ=UTC0 git show --quiet --date='format-local:%Y-%m-%d-%H-%M-%S' --format="%cd")
+export DATE_TAG="${commit_timestamp_utc}-${TAG}"
+
 export CACHE_TAG=${CACHE_TAG:-$TAG}
 export WORKDIR=${WORKDIR:-/workspace}
 export DOCKERFILE=${DOCKERFILE:-Dockerfile}
@@ -41,9 +44,16 @@ _output "pwd: $(pwd)"
 _output "nproc: $(nproc)"
 _output "docker version:"
 
+_output "TAG: ${TAG}"
+_output "DATE_TAG: ${DATE_TAG}"
+_output "CACHE_TAG: ${CACHE_TAG}"
+_output "WORKDIR: ${WORKDIR}"
+_output "DOCKERFILE: ${DOCKERFILE}"
+_output "BUILD_OPTS: ${BUILD_OPTS}"
+_output "TRIES: ${TRIES}"
 
-printf "$(docker version)"
-echo ""
+printf "$(docker version)\n"
+
 
 _output "export:"
 export
