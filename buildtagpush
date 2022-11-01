@@ -31,7 +31,7 @@ export DOCKER_BUILDKIT=1
 tag=${TAG:-latest}
 export CACHE_TAG=${CACHE_TAG:-$tag}
 
-commit_timestamp_utc=$(TZ=UTC0 git show --quiet --date='format-local:%Y%m%d-%H%M%S' --format="%cd")
+commit_timestamp_utc=$(TZ=UTC0 git show --quiet --date='format-local:%Y%m%d%H%M%S' --format="%cd")
 export TAG="${commit_timestamp_utc}-${tag}"
 
 export WORKDIR=${WORKDIR:-/workspace}
