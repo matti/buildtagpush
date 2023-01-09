@@ -121,6 +121,9 @@ _output "BUILD $REGISTRY/$IMAGE:$TAG with cache from $REGISTRY/$IMAGE:$CACHE_TAG
           scratch|cache)
             continue
           ;;
+          *:${CACHE_TAG})
+            continue
+          ;;
         esac
 
         (
